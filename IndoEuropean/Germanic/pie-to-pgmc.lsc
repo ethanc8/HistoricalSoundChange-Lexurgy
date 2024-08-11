@@ -27,6 +27,7 @@ Symbol g [voiced velar stop consonant]
 Symbol f [unvoiced labial fricative consonant]
 Symbol v [voiced labial fricative consonant]
 Symbol ð [voiced dental fricative consonant]
+Symbol þ [unvoiced dental fricative consonant]
 Symbol s [unvoiced alveolar fricative consonant]
 Symbol z [voiced alveolar fricative consonant]
 Symbol x [unvoiced velar fricative consonant]
@@ -53,13 +54,14 @@ Diacritic ʰ [+aspirated]
 Diacritic ʷ [+labialized]
 # Diacritic ː [long]
 # Diacritic ːː [overlong]
-Diacritic ̄  (floating) [long]
-Diacritic ̂  (floating) [overlong]
+Diacritic ̄  [long]
+Diacritic ̂  [overlong]
 Diacritic ́  (floating) [+hightone]
 # Diacritic ̥  [-voiced]
 
 Class pielaryngeal {h₁, h₂, h₃, H}
 Element sonorant {[vowel], [semivowel], [nasal], l, r}
+Element obstruent {[stop consonant], [fricative consonant]}
 
 # https://en.wikipedia.org/wiki/Proto-Germanic_language#Pre-Proto-Germanic_(Pre-PGmc)
 # Merging of PIE "palatovelar" and "velar" plosives ("centumization")
@@ -155,3 +157,32 @@ labiovelar-delabialization:
 
 romanizer-Pre-PGmc:
     unchanged
+
+# https://en.wikipedia.org/wiki/Proto-Germanic_language#Early_Proto-Germanic
+# Loss of word-final non-high short vowels /e/, /a/, /o/
+loss-final-vowels:
+    # TODO: When the lost vowel was accented, the accent shifted to the preceding syllable
+    # A /j/ or /w/ preceding the vowel is also lost
+    [semivowel] [short vowel !close] =>  * * / _ $
+    Then: [short vowel !close] => * / _ $
+    # TODO: Single-syllable words were not affected, but clitics were
+
+# https://en.wikipedia.org/wiki/Grimm%27s_law
+grimms-law:
+    # Voiceless plosives become fricatives, unless preceded by another obstruent. In a sequence of two voiceless obstruents, the second obstruent remains a plosive. 
+    [-aspirated unvoiced stop consonant] => [fricative] // @obstruent _
+    # Voiced plosives are devoiced
+    [-aspirated voiced stop consonant] => [unvoiced]
+    # Aspirated plosives become voiced plosives or fricatives (see below): 
+    [+aspirated stop consonant] => [-aspirated]
+
+# https://en.wikipedia.org/wiki/Verner%27s_law
+# Voiceless fricatives are voiced when preceded by an unaccented vowel, including cases where the vowel and fricative are separated by a sonorant (/n, m, r, l, j, w)
+verners-law:
+    [unvoiced fricative consonant] => [voiced] / [vowel -hightone] @sonorant? _
+
+# TODO: Finish the rest of Early PGmc
+
+romanizer-PGmc:
+    xʷ => hw
+    Then: x => h
