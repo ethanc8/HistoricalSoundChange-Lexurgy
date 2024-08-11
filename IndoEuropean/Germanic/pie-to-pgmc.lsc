@@ -1,0 +1,157 @@
+# Note, we mainly use Proto-Indo-European and Proto-Germanic phonetic notation, not IPA.
+Feature +labialized
+Feature +aspirated
+# Feature +long
+Feature +hightone
+Feature +stress
+
+Feature consonantvowel(consonant, semivowel, vowel)
+Feature length(*short, long, overlong)
+# Consonants
+Feature voicing(unvoiced, voiced)
+Feature place(labial, dental, alveolar, velar, glottal, palatal, labialvelar)
+Feature manner(stop, fricative, nasal, approximant)
+
+# Vowels
+Feature height(close, nearclose, closemid, mid, openmid, nearopen, open)
+Feature backness(front, nearfront, central, nearback, back)
+Feature roundedness(unrounded, rounded)
+
+# Consonants
+Symbol p [unvoiced labial stop consonant]
+Symbol b [voiced labial stop consonant]
+Symbol t [unvoiced dental stop consonant]
+Symbol d [voiced dental stop consonant]
+Symbol k [unvoiced velar stop consonant]
+Symbol g [voiced velar stop consonant]
+Symbol f [unvoiced labial fricative consonant]
+Symbol v [voiced labial fricative consonant]
+Symbol ð [voiced dental fricative consonant]
+Symbol s [unvoiced alveolar fricative consonant]
+Symbol z [voiced alveolar fricative consonant]
+Symbol x [unvoiced velar fricative consonant]
+Symbol ɣ [voiced velar fricative consonant]
+Symbol h [unvoiced glottal fricative consonant]
+Symbol m [voiced labial nasal consonant]
+Symbol n [voiced alveolar nasal consonant]
+Symbol l [voiced alveolar approximant consonant]
+
+# Semivowels
+Symbol y [voiced palatal approximant close front unrounded semivowel]
+Symbol w [voiced labialvelar approximant close back rounded semivowel]
+
+# Vowels
+Symbol i [close front unrounded vowel]
+Symbol e [closemid front unrounded vowel]
+Symbol a [open front unrounded vowel]
+Symbol o [closemid back rounded vowel]
+Symbol u [close back rounded vowel]
+Symbol ə [mid central unrounded vowel]
+
+Diacritic ˈ (floating) [+stress]
+Diacritic ʰ [+aspirated]
+Diacritic ʷ [+labialized]
+# Diacritic ː [long]
+# Diacritic ːː [overlong]
+Diacritic ̄  (floating) [long]
+Diacritic ̂  (floating) [overlong]
+Diacritic ́  (floating) [+hightone]
+# Diacritic ̥  [-voiced]
+
+Class pielaryngeal {h₁, h₂, h₃, H}
+Element sonorant {[vowel], [semivowel], [nasal], l, r}
+
+# https://en.wikipedia.org/wiki/Proto-Germanic_language#Pre-Proto-Germanic_(Pre-PGmc)
+# Merging of PIE "palatovelar" and "velar" plosives ("centumization")
+# also here so that ḱ and ǵ aren't interpreted as pitch accent
+centumization:
+    ḱ => k
+    ǵ => g
+
+# https://en.wikipedia.org/wiki/Proto-Germanic_language#Pre-Proto-Germanic_(Pre-PGmc)
+# Allophonic colouring of /e/ adjacent to laryngeal consonants
+laryngeal-coloring:
+    e => a / _ h₂
+    e => a / h₂ _
+    e => o / _ h₃
+    e => o / h₃ _
+
+# https://en.wikipedia.org/wiki/Proto-Germanic_language#Pre-Proto-Germanic_(Pre-PGmc)
+# Epenthesis of /u/ before the syllabic sonorants
+syllabic-sonorants-u-epenthesis:
+    m̥ => um
+    n̥ => un
+    l̥ => ul
+    r̥ => ur
+
+# https://en.wikipedia.org/wiki/Proto-Germanic_language#Pre-Proto-Germanic_(Pre-PGmc)
+# An epenthetic /s/ was inserted already in PIE after dental consonants when they were followed by a suffix beginning with a dental. This sequence now becomes /TsT/ > /ts/ > /ss/
+epenthetic-s:
+    dst => ss
+    tst => ss
+    tsd => ss
+    dsd => ss
+
+# https://en.wikipedia.org/wiki/Proto-Germanic_language#Pre-Proto-Germanic_(Pre-PGmc)
+# Geminate consonants are shortened after a consonant or a long vowel
+geminate-shortening:
+    [long consonant] => [short] / [consonant] _
+    # Delete a consonant if it's before itself and is after a consonant or a long vowel or a semivowel
+    [consonant]$1 => * / [consonant] _ $1
+    [consonant]$1 => * / [semivowel] _ $1
+    [consonant]$1 => * / [long vowel] _ $1
+    [consonant]$1 => * / [vowel]*2 _ $1
+
+# https://en.wikipedia.org/wiki/Proto-Germanic_language#Pre-Proto-Germanic_(Pre-PGmc)
+laryngeal-loss:
+    # Laryngeals are lost after vowels but lengthen the preceding vowel
+    # -> Lengthen the previous vowel
+    [vowel] => [long] / _ @pielaryngeal
+    # -> Lose the laryngeal
+    Then: @pielaryngeal => * / [vowel] _
+    # -> Two vowels that come to stand in hiatus because of that change contract into an overlong vowel
+    #    In word-final position, the resulting long vowels remain distinct from (shorter than) the overlong vowels that were formed from PIE word-final long vowels
+    # --> First get rid of the length of one of the vowels
+    Then: (
+        [long vowel]$1 => [short] / _ [vowel $consonantvowel $height $backness $roundedness]
+        [long vowel]$1 => [short] / [vowel $consonantvowel $height $backness $roundedness] _
+    )
+    # --> Now make the two vowels into one overlong vowel
+    Then: (
+      [vowel]$1 $1 => [overlong] * // _ $
+      [vowel]$1 $1 => [long] * / _ $
+    )
+    # After dealing with that deal with everything else
+  Then: (
+    # Word-initial laryngeals are lost before a consonant
+    @pielaryngeal => * / $ _ [consonant]
+    @pielaryngeal => * / $ _ [semivowel]
+    # Laryngeals are lost before vowels
+    @pielaryngeal => * / _ [vowel]
+  )
+
+# https://en.wikipedia.org/wiki/Proto-Germanic_language#Pre-Proto-Germanic_(Pre-PGmc)
+# Cowgill's law: /h₃/ (and possibly /h₂/) is strengthened to /g/ between a sonorant and /w/
+cowgills-law:
+    h₃ => g / @sonorant _ w
+
+# https://en.wikipedia.org/wiki/Proto-Germanic_language#Pre-Proto-Germanic_(Pre-PGmc)
+# Vocalisation of remaining laryngeals: /H/ > /ə/
+laryngeal-vocalization:
+    @pielaryngeal => ə
+
+# https://en.wikipedia.org/wiki/Proto-Germanic_language#Pre-Proto-Germanic_(Pre-PGmc)
+# Velars are labialised by following /w/
+velar-labialization:
+    [velar] => [+labialized] / _ w
+
+# https://en.wikipedia.org/wiki/Proto-Germanic_language#Pre-Proto-Germanic_(Pre-PGmc)
+# Labiovelars are delabialised next to /u/ (or /un/) or before /t/
+labiovelar-delabialization:
+    [velar +labialized] => [-labialized] / _ u
+    [velar +labialized] => [-labialized] / _ t
+    [velar +labialized] => [-labialized] / u _
+    [velar +labialized] => [-labialized] / un _
+
+romanizer-Pre-PGmc:
+    unchanged
