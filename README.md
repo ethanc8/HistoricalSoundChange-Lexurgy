@@ -1,4 +1,4 @@
-# HistoricalSoundChange-Lexurgy
+# Lexurgy's Historical Sound Change
 
 Simulating the development of real-world languages via Lexurgy Sound Change Applier.
 
