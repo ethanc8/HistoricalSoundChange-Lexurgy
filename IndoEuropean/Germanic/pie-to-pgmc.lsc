@@ -181,7 +181,63 @@ grimms-law:
 verners-law:
     [unvoiced fricative consonant] => [voiced] / [vowel -hightone] @sonorant? _
 
-# TODO: Finish the rest of Early PGmc
+stress-to-first:
+    [+hightone] => [-hightone]
+
+word-initial-changes:
+    gʷ => b / _ $
+
+unstressed-change:
+    owo => ō
+    e => o / _ w [consonant]
+    e => o / _ w $
+    e => i / _ [consonant] // _ r
+    ey => ī
+    yi => i
+
+backified:
+    o => a
+    ō => a
+    ô => â
+
+romanizer-Late-PGmc:
+    unchanged
+
+nasal-final:
+    m => n / _ $
+
+nasal-dental:
+    m => n / _ [dental consonant]
+
+final-n-loss:
+    n =>  ̨ / _ $
+
+schwa-deletion:
+    ə => * / [consonant] _ [consonant] // [fricative consonant] _ [fricative consonant]
+
+assimilation-sonorants:
+    w => n / n _
+    n => l / l _
+    z => m / _ m
+
+final-t-loss:
+    t => * / _ $
+
+round-to-w:
+    gʷ => w
+
+long-a-to-o:
+    ā => ō
+    â => ô
+
+early-i-mutation:
+    e => i / _ [] {i, y}
+
+y-loss:
+    y => * / [vowel] _ [vowel]
+
+n-loss:
+    n => * / _ x
 
 romanizer-PGmc:
     xʷ => hw
